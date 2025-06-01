@@ -74,7 +74,9 @@ Response:
             "description": "Product Description",
             "price": 99.99,
             "stock": 100,
-            "categoryId": 1
+            "categoryId": 1,
+            "imageUrl": "https://example.com/images/product.jpg",
+            "videoUrl": "https://www.youtube.com/watch?v=example"
         }
     ],
     "pageNumber": 1,
@@ -83,6 +85,24 @@ Response:
     "totalPages": 10,
     "first": true,
     "last": false
+}
+```
+
+#### Create Product
+```http
+POST /api/products
+```
+
+Request Body:
+```json
+{
+    "name": "New Product",
+    "description": "Product Description",
+    "price": 99.99,
+    "stock": 100,
+    "categoryId": 1,
+    "imageUrl": "https://example.com/images/product.jpg",
+    "videoUrl": "https://www.youtube.com/watch?v=example"
 }
 ```
 
@@ -128,6 +148,70 @@ Response:
     "last": false
 }
 ```
+
+## Product Media Fields
+
+Products now support two media fields:
+
+1. `imageUrl`: A URL to the product's image
+   - Accepts any valid URL pointing to an image file
+   - Example: "https://example.com/images/product.jpg"
+   - Optional field, can be null
+
+2. `videoUrl`: A URL to the product's video (YouTube)
+   - Accepts YouTube video URLs
+   - Example: "https://www.youtube.com/watch?v=example"
+   - Optional field, can be null
+
+These fields allow you to:
+- Display product images in your e-commerce frontend
+- Show product demonstration videos from YouTube
+- Enhance product presentation with rich media content
+
+## Sample Data
+
+The application comes with pre-loaded sample data:
+
+1. Users:
+   - John Doe (john@example.com)
+   - Jane Smith (jane@example.com)
+   - Mike Johnson (mike@example.com)
+
+2. Product Categories:
+   - Electronics
+   - Clothing
+   - Books
+   - Home & Garden
+
+3. Products (with images and videos):
+   - Electronics:
+     - iPhone 14 Pro (with product image and unboxing video)
+     - Samsung Galaxy S23 (with product image and review video)
+     - Wireless Earbuds (with product image and demo video)
+   - Clothing:
+     - Cotton T-Shirt (with product image)
+     - Denim Jeans (with product image)
+     - Running Shoes (with product image and demo video)
+   - Books:
+     - Java Programming (with cover image)
+     - Python Basics (with cover image)
+   - Home & Garden:
+     - Garden Tools Set (with product image and usage video)
+     - Plant Pots (with product image and DIY video)
+
+## Database Schema
+
+Tables and their fields:
+
+### products
+- `id`: BIGSERIAL PRIMARY KEY
+- `name`: VARCHAR(255) NOT NULL
+- `description`: TEXT
+- `price`: DECIMAL(10,2) NOT NULL
+- `stock`: INTEGER NOT NULL
+- `category_id`: BIGINT NOT NULL (References categories.id)
+- `image_url`: TEXT
+- `video_url`: TEXT
 
 ## API Endpoints
 
@@ -192,27 +276,6 @@ Example response format for paginated endpoints:
   "last": false
 }
 ```
-
-### Sample Data
-
-The application comes with pre-loaded sample data:
-
-1. Users:
-   - John Doe (john@example.com)
-   - Jane Smith (jane@example.com)
-   - Mike Johnson (mike@example.com)
-
-2. Product Categories:
-   - Electronics
-   - Clothing
-   - Books
-   - Home & Garden
-
-3. Products:
-   - Electronics: iPhone 14 Pro, Samsung Galaxy S23, Wireless Earbuds
-   - Clothing: Cotton T-Shirt, Denim Jeans, Running Shoes
-   - Books: Java Programming, Python Basics
-   - Home & Garden: Garden Tools Set, Plant Pots
 
 ## Security
 

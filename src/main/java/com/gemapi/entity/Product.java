@@ -30,4 +30,10 @@ public class Product {
 
     @Column(name = "category_id", nullable = false)
     private Long categoryId;
+
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(name = "video_url")
+    private String videoUrl;
 } 
