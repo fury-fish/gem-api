@@ -39,7 +39,7 @@ A Spring Boot CRUD API project for an e-commerce system with user management, pr
 
 2. Build the project:
    ```bash
-   ./mvnw clean package
+   ./mvnw clean install
    ```
 
 3. Run the application:
@@ -48,6 +48,86 @@ A Spring Boot CRUD API project for an e-commerce system with user management, pr
    ```
 
 The application will start on `http://localhost:8080`
+
+## API Documentation
+
+### Products API
+
+#### Get All Products
+```http
+GET /api/products?page=1&size=10&sortBy=id&direction=asc
+```
+
+Query Parameters:
+- `page` (optional): Page number, starting from 1 (default: 1)
+- `size` (optional): Number of items per page (default: 10)
+- `sortBy` (optional): Field to sort by (default: "id")
+- `direction` (optional): Sort direction, "asc" or "desc" (default: "asc")
+
+Response:
+```json
+{
+    "content": [
+        {
+            "id": 1,
+            "name": "Product Name",
+            "description": "Product Description",
+            "price": 99.99,
+            "stock": 100,
+            "categoryId": 1
+        }
+    ],
+    "pageNumber": 1,
+    "pageSize": 10,
+    "totalElements": 100,
+    "totalPages": 10,
+    "first": true,
+    "last": false
+}
+```
+
+#### Get Products by Category
+```http
+GET /api/products/category/{categoryId}?page=1&size=10&sortBy=id&direction=asc
+```
+
+Query Parameters:
+- `page` (optional): Page number, starting from 1 (default: 1)
+- `size` (optional): Number of items per page (default: 10)
+- `sortBy` (optional): Field to sort by (default: "id")
+- `direction` (optional): Sort direction, "asc" or "desc" (default: "asc")
+
+### Categories API
+
+#### Get All Categories
+```http
+GET /api/categories?page=1&size=10&sortBy=id&direction=asc
+```
+
+Query Parameters:
+- `page` (optional): Page number, starting from 1 (default: 1)
+- `size` (optional): Number of items per page (default: 10)
+- `sortBy` (optional): Field to sort by (default: "id")
+- `direction` (optional): Sort direction, "asc" or "desc" (default: "asc")
+
+Response:
+```json
+{
+    "content": [
+        {
+            "id": 1,
+            "name": "Category Name",
+            "description": "Category Description"
+        }
+    ],
+    "pageNumber": 1,
+    "pageSize": 10,
+    "totalElements": 50,
+    "totalPages": 5,
+    "first": true,
+    "last": false
+}
+```
 
 ## API Endpoints
 
@@ -58,6 +138,60 @@ The application will start on `http://localhost:8080`
 - Get All Users: `GET /api/users`
 - Delete User: `DELETE /api/users/{id}`
 - Get User by Email: `GET /api/users/email/{email}`
+
+### Product Management
+- Create Product: `POST /api/products`
+- Get Product by ID: `GET /api/products/{id}`
+- Get All Products: `GET /api/products`
+  - Supports pagination and sorting:
+    ```
+    GET /api/products?page=0&size=10&sortBy=name&direction=asc
+    ```
+- Get Products by Category: `GET /api/products/category/{categoryId}`
+  - Supports pagination and sorting:
+    ```
+    GET /api/products/category/1?page=0&size=10&sortBy=price&direction=desc
+    ```
+- Delete Product: `DELETE /api/products/{id}`
+
+### Category Management
+- Create Category: `POST /api/categories`
+- Get Category by ID: `GET /api/categories/{id}`
+- Get All Categories: `GET /api/categories`
+  - Supports pagination and sorting:
+    ```
+    GET /api/categories?page=0&size=10&sortBy=name&direction=asc
+    ```
+- Check Category Exists: `GET /api/categories/exists/{name}`
+- Delete Category: `DELETE /api/categories/{id}`
+
+## Pagination and Sorting
+
+The API supports pagination and sorting for list endpoints. You can use the following query parameters:
+
+- `page`: Page number (0-based, defaults to 0)
+- `size`: Number of items per page (defaults to 10)
+- `sortBy`: Field to sort by (defaults to "id")
+- `direction`: Sort direction ("asc" or "desc", defaults to "asc")
+
+Example response format for paginated endpoints:
+```json
+{
+  "content": [
+    {
+      "id": 1,
+      "name": "Example Item",
+      // ... other fields
+    }
+  ],
+  "pageNumber": 0,
+  "pageSize": 10,
+  "totalElements": 100,
+  "totalPages": 10,
+  "first": true,
+  "last": false
+}
+```
 
 ### Sample Data
 
