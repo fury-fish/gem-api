@@ -53,6 +53,30 @@ INSERT INTO products (name, description, price, stock, category_id, image_url, v
      'https://example.com/images/plant-pots.jpg',
      'https://www.youtube.com/watch?v=example10');
 
+-- Insert sale events
+INSERT INTO sale_events (name, description, discount_percent, start_date, end_date, active) VALUES
+    ('Spring Sale', 'Big discounts on spring collection', 20, 
+     CURRENT_TIMESTAMP - INTERVAL '1 day', 
+     CURRENT_TIMESTAMP + INTERVAL '30 days', 
+     true),
+    ('Flash Sale', 'Limited time offer on electronics', 30, 
+     CURRENT_TIMESTAMP - INTERVAL '1 hour', 
+     CURRENT_TIMESTAMP + INTERVAL '24 hours', 
+     true),
+    ('Clearance Sale', 'End of season clearance', 50, 
+     CURRENT_TIMESTAMP + INTERVAL '7 days', 
+     CURRENT_TIMESTAMP + INTERVAL '14 days', 
+     false);
+
+-- Apply sales to products
+INSERT INTO product_sales (product_id, sale_event_id, active) VALUES
+    (1, 2, true),  -- iPhone 14 Pro in Flash Sale
+    (2, 2, true),  -- Samsung Galaxy S23 in Flash Sale
+    (3, 2, true),  -- Wireless Earbuds in Flash Sale
+    (4, 1, true),  -- Cotton T-Shirt in Spring Sale
+    (5, 1, true),  -- Denim Jeans in Spring Sale
+    (6, 1, true);  -- Running Shoes in Spring Sale
+
 -- Insert orders
 INSERT INTO orders (user_id, order_date, total_amount, status) VALUES
     (1, '2024-03-01 10:00:00', 1149.98, 'COMPLETED'),
@@ -69,9 +93,9 @@ INSERT INTO order_details (order_id, product_id, quantity, unit_price) VALUES
     (3, 10, 2, 24.99);
 
 -- Insert audit logs
-INSERT INTO audit_logs (action, entity_name, entity_id, details, user_id, user_email, timestamp, status) VALUES
-    ('CREATE_USER', 'UserService', '1', 'Created new user: John Doe', 1, 'john@example.com', CURRENT_TIMESTAMP - INTERVAL '3 days', 'SUCCESS'),
-    ('CREATE_ORDER', 'OrderService', '1', 'Created new order with total amount: $1079.98', 1, 'john@example.com', CURRENT_TIMESTAMP - INTERVAL '2 days', 'SUCCESS'),
-    ('UPDATE_PRODUCT', 'ProductService', '1', 'Updated product stock: 50 -> 49', 1, 'john@example.com', CURRENT_TIMESTAMP - INTERVAL '2 days', 'SUCCESS'),
-    ('CREATE_ORDER', 'OrderService', '2', 'Created new order with total amount: $119.98', 2, 'jane@example.com', CURRENT_TIMESTAMP - INTERVAL '1 day', 'SUCCESS'),
-    ('CREATE_ORDER', 'OrderService', '3', 'Created new order with total amount: $269.97', 3, 'mike@example.com', CURRENT_TIMESTAMP, 'SUCCESS'); 
+INSERT INTO audit_logs (user_id, action, entity_type, entity_id, details, timestamp) VALUES
+    (1, 'CREATE_USER', 'User', 1, 'Created new user: John Doe', CURRENT_TIMESTAMP - INTERVAL '3 days'),
+    (1, 'CREATE_ORDER', 'Order', 1, 'Created new order with total amount: $1079.98', CURRENT_TIMESTAMP - INTERVAL '2 days'),
+    (1, 'UPDATE_PRODUCT', 'Product', 1, 'Updated product stock: 50 -> 49', CURRENT_TIMESTAMP - INTERVAL '2 days'),
+    (2, 'CREATE_ORDER', 'Order', 2, 'Created new order with total amount: $119.98', CURRENT_TIMESTAMP - INTERVAL '1 day'),
+    (3, 'CREATE_ORDER', 'Order', 3, 'Created new order with total amount: $269.97', CURRENT_TIMESTAMP); 

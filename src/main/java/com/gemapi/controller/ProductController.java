@@ -7,8 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.gemapi.dto.PageResponse;
-import com.gemapi.entity.Product;
+import com.gemapi.dto.ProductWithSaleDTO;
+import com.gemapi.dto.ProductRequestDTO;
 import com.gemapi.service.ProductService;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/products")
@@ -21,29 +23,29 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        return ResponseEntity.ok(productService.save(product));
+    public ResponseEntity<ProductWithSaleDTO> createProduct(@Valid @RequestBody ProductRequestDTO productRequest) {
+        return ResponseEntity.ok(productService.save(productRequest));
     }
 
     @GetMapping
-    public ResponseEntity<PageResponse<Product>> getAllProducts(
+    public ResponseEntity<PageResponse<ProductWithSaleDTO>> getAllProducts(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction) {
         Sort.Direction sortDirection = Sort.Direction.fromString(direction);
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(sortDirection, sortBy));
-        Page<Product> productPage = productService.findAll(pageRequest);
+        Page<ProductWithSaleDTO> productPage = productService.findAll(pageRequest);
         return ResponseEntity.ok(PageResponse.of(productPage, page));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
+    public ResponseEntity<ProductWithSaleDTO> getProductById(@PathVariable Long id) {
         return ResponseEntity.ok(productService.findById(id));
     }
 
     @GetMapping("/category/{categoryId}")
-    public ResponseEntity<PageResponse<Product>> getProductsByCategoryId(
+    public ResponseEntity<PageResponse<ProductWithSaleDTO>> getProductsByCategoryId(
             @PathVariable Long categoryId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -51,7 +53,7 @@ public class ProductController {
             @RequestParam(defaultValue = "asc") String direction) {
         Sort.Direction sortDirection = Sort.Direction.fromString(direction);
         PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(sortDirection, sortBy));
-        Page<Product> productPage = productService.findByCategoryId(categoryId, pageRequest);
+        Page<ProductWithSaleDTO> productPage = productService.findByCategoryId(categoryId, pageRequest);
         return ResponseEntity.ok(PageResponse.of(productPage, page));
     }
 
