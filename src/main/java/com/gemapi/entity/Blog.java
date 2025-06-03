@@ -10,36 +10,36 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "blogs")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+public class Blog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String title;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private User author;
 
     @Column(name = "image_url")
     private String imageUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Category parent;
+    private boolean published = false;
 
-    @OneToMany(mappedBy = "parent")
-    private List<Category> subcategories;
+    @Column(name = "view_count")
+    private Integer viewCount = 0;
 
-    @OneToMany(mappedBy = "category")
-    private List<Product> products;
-
-    private boolean active = true;
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL)
+    private List<BlogComment> comments;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

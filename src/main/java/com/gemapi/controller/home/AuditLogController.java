@@ -1,4 +1,4 @@
-package com.gemapi.controller;
+package com.gemapi.controller.home;
 
 import java.util.List;
 

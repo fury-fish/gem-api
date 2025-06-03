@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "categories")
+@Table(name = "partners")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Category {
+public class Partner {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,26 +26,33 @@ public class Category {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "contact_person")
+    private String contactPerson;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
-    private Category parent;
+    @Column(name = "contact_email")
+    private String contactEmail;
 
-    @OneToMany(mappedBy = "parent")
-    private List<Category> subcategories;
+    @Column(name = "contact_phone")
+    private String contactPhone;
 
-    @OneToMany(mappedBy = "category")
+    private String address;
+
+    @Column(name = "website_url")
+    private String websiteUrl;
+
+    @Column(name = "logo_url")
+    private String logoUrl;
+
+    @OneToMany(mappedBy = "partner")
     private List<Product> products;
-
-    private boolean active = true;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    private boolean active = true;
 
     @PrePersist
     protected void onCreate() {

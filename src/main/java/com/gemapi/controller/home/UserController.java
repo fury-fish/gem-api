@@ -1,14 +1,16 @@
-package com.gemapi.controller;
+package com.gemapi.controller.home;
 
 import com.gemapi.dto.ApiResponse;
+import com.gemapi.dto.PageResponse;
 import com.gemapi.dto.UserDTO;
 import com.gemapi.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
@@ -39,9 +41,15 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<UserDTO>>> getAllUsers() {
-        List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(ApiResponse.success(users));
+    public ResponseEntity<ApiResponse<PageResponse<UserDTO>>> getAllUsers(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction) {
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        PageRequest pageRequest = PageRequest.of(page - 1, size, Sort.by(sortDirection, sortBy));
+        Page<UserDTO> userPage = userService.findAll(pageRequest);
+        return ResponseEntity.ok(ApiResponse.success(PageResponse.of(userPage, page)));
     }
 
     @DeleteMapping("/{id}")

@@ -1,31 +1,47 @@
-package com.gemapi.controller;
+package com.gemapi.controller.admin;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.gemapi.dto.PageResponse;
 import com.gemapi.entity.Category;
 import com.gemapi.service.CategoryService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
 @RestController
-@RequestMapping("/api/categories")
-public class CategoryController {
+@RequestMapping("/api/v1/admin/categories")
+@RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
+@Tag(name = "Admin Category Management", description = "Admin APIs for category management")
+public class AdminCategoryController {
 
     private final CategoryService categoryService;
 
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
+    @PostMapping
+    @Operation(summary = "Create a new category", description = "Create a new category with the provided details")
+    public ResponseEntity<Category> createCategory(@Valid @RequestBody Category category) {
+        return ResponseEntity.ok(categoryService.save(category));
     }
 
-    @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+    @PutMapping("/{id}")
+    @Operation(summary = "Update a category", description = "Update an existing category with the provided details")
+    public ResponseEntity<Category> updateCategory(
+            @PathVariable Long id,
+            @Valid @RequestBody Category category) {
+        category.setId(id);
         return ResponseEntity.ok(categoryService.save(category));
     }
 
     @GetMapping
+    @Operation(summary = "Get all categories", description = "Get all categories with pagination and sorting")
     public ResponseEntity<PageResponse<Category>> getAllCategories(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -38,16 +54,13 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get a category by ID", description = "Get a category by its ID")
     public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.findById(id));
     }
 
-    @GetMapping("/exists/{name}")
-    public ResponseEntity<Boolean> checkCategoryExists(@PathVariable String name) {
-        return ResponseEntity.ok(categoryService.existsByName(name));
-    }
-
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete a category", description = "Delete a category by its ID")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
         categoryService.deleteById(id);
         return ResponseEntity.noContent().build();

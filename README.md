@@ -1,13 +1,99 @@
-# Gem API
+# Gem Store API
 
-A Spring Boot CRUD API project for an e-commerce system with user management, product catalog, order processing, and audit logging capabilities.
+A Spring Boot API for an e-commerce store with customer and admin domains.
+
+## Features
+
+- JWT Authentication
+- Role-based Authorization (Admin, Mod, Customer)
+- Customer and Admin APIs
+- Product Management
+- Order Management
+- Category Management with Menu/Sub-menu
+- Partner Management
+- Blog System
+- Review System
+- Notification System
+- Reporting System
 
 ## Prerequisites
 
-- Java 17 or higher
-- Maven 3.6 or higher
-- PostgreSQL 15 or higher
-- Git
+- Java 17
+- Maven
+- PostgreSQL
+
+## Getting Started
+
+1. Clone the repository
+2. Create a PostgreSQL database named `gemstore`
+3. Update `src/main/resources/application-local.properties` with your database credentials
+4. Run the application:
+   ```bash
+   mvn spring-boot:run
+   ```
+
+## API Documentation
+
+The API documentation is available at:
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- OpenAPI JSON: http://localhost:8080/v3/api-docs
+
+## Authentication
+
+The API uses JWT for authentication. To get started:
+
+1. Register a new user:
+   ```bash
+   curl -X POST http://localhost:8080/api/v1/auth/register \
+     -H "Content-Type: application/json" \
+     -d '{
+       "name": "John Doe",
+       "email": "john@example.com",
+       "password": "123456"
+     }'
+   ```
+
+2. Login to get a JWT token:
+   ```bash
+   curl -X POST http://localhost:8080/api/v1/auth/login \
+     -H "Content-Type: application/json" \
+     -d '{
+       "email": "john@example.com",
+       "password": "123456"
+     }'
+   ```
+
+3. Use the token in subsequent requests:
+   ```bash
+   curl -X GET http://localhost:8080/api/v1/customer/products \
+     -H "Authorization: Bearer YOUR_JWT_TOKEN"
+   ```
+
+## Profiles
+
+The application supports three profiles:
+- `local`: Development on local machine (default)
+- `dev`: Development server
+- `prod`: Production environment
+
+To run with a specific profile:
+```bash
+mvn spring-boot:run -Dspring.profiles.active=dev
+```
+
+## Security Note
+
+For testing purposes, you can disable security by commenting out the security configuration in `SecurityConfig.java` and uncommenting the permissive configuration:
+
+```java
+http.csrf(AbstractHttpConfigurer::disable)
+    .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+return http.build();
+```
+
+## License
+
+This project is licensed under the MIT License.
 
 ## Database Setup
 

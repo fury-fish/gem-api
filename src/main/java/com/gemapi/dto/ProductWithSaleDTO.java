@@ -2,53 +2,54 @@ package com.gemapi.dto;
 
 import com.gemapi.entity.Product;
 import com.gemapi.entity.SaleEvent;
-import java.math.BigDecimal;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProductWithSaleDTO {
     private Long id;
     private String name;
     private String description;
     private BigDecimal price;
-    private BigDecimal salePrice;
-    private Integer stock;
+    private Integer stockQuantity;
     private Long categoryId;
+    private Long partnerId;
     private String imageUrl;
-    private String videoUrl;
-    private SaleEvent saleEvent;
+    private Double averageRating;
+    private Integer reviewCount;
+    private boolean active;
+    private boolean hideIfOutOfStock;
+    private BigDecimal salePrice;
     private Integer discountPercent;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public ProductWithSaleDTO(Product product, SaleEvent saleEvent, Integer discountPercent) {
-        this.id = product.getId();
-        this.name = product.getName();
-        this.description = product.getDescription();
-        this.price = product.getPrice();
-        this.stock = product.getStock();
-        this.categoryId = product.getCategoryId();
-        this.imageUrl = product.getImageUrl();
-        this.videoUrl = product.getVideoUrl();
-        this.saleEvent = saleEvent;
-        this.discountPercent = discountPercent;
-        
-        if (discountPercent > 0) {
-            BigDecimal discountMultiplier = BigDecimal.ONE.subtract(
-                BigDecimal.valueOf(discountPercent).divide(BigDecimal.valueOf(100))
-            );
-            this.salePrice = product.getPrice().multiply(discountMultiplier);
-        } else {
-            this.salePrice = null;
-        }
+    public static ProductWithSaleDTO fromEntity(Product product) {
+        ProductWithSaleDTO dto = new ProductWithSaleDTO();
+        dto.setId(product.getId());
+        dto.setName(product.getName());
+        dto.setDescription(product.getDescription());
+        dto.setPrice(product.getPrice());
+        dto.setStockQuantity(product.getStockQuantity());
+        dto.setCategoryId(product.getCategory() != null ? product.getCategory().getId() : null);
+        dto.setPartnerId(product.getPartner() != null ? product.getPartner().getId() : null);
+        dto.setImageUrl(product.getImageUrl());
+        dto.setAverageRating(product.getAverageRating());
+        dto.setReviewCount(product.getReviewCount());
+        dto.setActive(product.isActive());
+        dto.setHideIfOutOfStock(product.isHideIfOutOfStock());
+        dto.setSalePrice(product.getSalePrice());
+        dto.setDiscountPercent(product.getDiscountPercent());
+        dto.setCreatedAt(product.getCreatedAt());
+        dto.setUpdatedAt(product.getUpdatedAt());
+        return dto;
     }
-
-    // Getters
-    public Long getId() { return id; }
-    public String getName() { return name; }
-    public String getDescription() { return description; }
-    public BigDecimal getPrice() { return price; }
-    public BigDecimal getSalePrice() { return salePrice; }
-    public Integer getStock() { return stock; }
-    public Long getCategoryId() { return categoryId; }
-    public String getImageUrl() { return imageUrl; }
-    public String getVideoUrl() { return videoUrl; }
-    public SaleEvent getSaleEvent() { return saleEvent; }
-    public Integer getDiscountPercent() { return discountPercent; }
 } 

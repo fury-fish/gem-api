@@ -1,4 +1,4 @@
-package com.gemapi.controller;
+package com.gemapi.controller.home;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

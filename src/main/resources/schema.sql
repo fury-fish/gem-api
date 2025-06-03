@@ -4,6 +4,154 @@ CREATE DATABASE gemstore;
 
 \c gemstore;
 
+-- Drop tables in reverse order to avoid foreign key constraints
+DROP TABLE IF EXISTS reviews CASCADE;
+DROP TABLE IF EXISTS product_sales CASCADE;
+DROP TABLE IF EXISTS sale_events CASCADE;
+DROP TABLE IF EXISTS products CASCADE;
+DROP TABLE IF EXISTS categories CASCADE;
+DROP TABLE IF EXISTS partners CASCADE;
+DROP TABLE IF EXISTS notifications CASCADE;
+DROP TABLE IF EXISTS blog_comments CASCADE;
+DROP TABLE IF EXISTS blogs CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+
+-- Users table
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) NOT NULL,
+    phone_number VARCHAR(20),
+    address TEXT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    last_login TIMESTAMP,
+    enabled BOOLEAN DEFAULT true
+);
+
+-- Categories table
+CREATE TABLE categories (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    image_url VARCHAR(255),
+    parent_id BIGINT REFERENCES categories(id),
+    active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Partners table
+CREATE TABLE partners (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    contact_person VARCHAR(255),
+    contact_email VARCHAR(255),
+    contact_phone VARCHAR(20),
+    address TEXT,
+    website_url VARCHAR(255),
+    logo_url VARCHAR(255),
+    active BOOLEAN DEFAULT true,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Products table
+CREATE TABLE products (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL,
+    stock_quantity INTEGER NOT NULL,
+    category_id BIGINT REFERENCES categories(id),
+    partner_id BIGINT REFERENCES partners(id),
+    image_url VARCHAR(255),
+    average_rating DOUBLE PRECISION,
+    review_count INTEGER DEFAULT 0,
+    active BOOLEAN DEFAULT true,
+    hide_if_out_of_stock BOOLEAN DEFAULT false,
+    sale_price DECIMAL(10,2),
+    discount_percent INTEGER,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Sale Events table
+CREATE TABLE sale_events (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    discount_percent INTEGER NOT NULL,
+    start_date TIMESTAMP NOT NULL,
+    end_date TIMESTAMP NOT NULL,
+    active BOOLEAN DEFAULT true
+);
+
+-- Product Sales junction table
+CREATE TABLE product_sales (
+    product_id BIGINT REFERENCES products(id),
+    sale_event_id BIGINT REFERENCES sale_events(id),
+    active BOOLEAN DEFAULT true,
+    PRIMARY KEY (product_id, sale_event_id)
+);
+
+-- Reviews table
+CREATE TABLE reviews (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users(id) NOT NULL,
+    product_id BIGINT REFERENCES products(id),
+    rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Blogs table
+CREATE TABLE blogs (
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    author_id BIGINT REFERENCES users(id),
+    image_url VARCHAR(255),
+    published BOOLEAN DEFAULT false,
+    view_count INTEGER DEFAULT 0,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Blog Comments table
+CREATE TABLE blog_comments (
+    id BIGSERIAL PRIMARY KEY,
+    blog_id BIGINT REFERENCES blogs(id),
+    user_id BIGINT REFERENCES users(id),
+    content TEXT NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Notifications table
+CREATE TABLE notifications (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT REFERENCES users(id),
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    type VARCHAR(50),
+    read BOOLEAN DEFAULT false,
+    created_at TIMESTAMP
+);
+
+-- Create indexes
+CREATE INDEX idx_products_category ON products(category_id);
+CREATE INDEX idx_products_partner ON products(partner_id);
+CREATE INDEX idx_reviews_product ON reviews(product_id);
+CREATE INDEX idx_reviews_user ON reviews(user_id);
+CREATE INDEX idx_blog_comments_blog ON blog_comments(blog_id);
+CREATE INDEX idx_blog_comments_user ON blog_comments(user_id);
+CREATE INDEX idx_notifications_user ON notifications(user_id);
+
 -- Drop tables if they exist
 DROP TABLE IF EXISTS audit_logs;
 DROP TABLE IF EXISTS order_details;

@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    Page<Product> findByCategoryId(Long categoryId, Pageable pageable);
+    Page<Product> findByCategory_Id(Long categoryId, Pageable pageable);
     boolean existsByNameAndCategoryId(String name, Long categoryId);
 
     @Query(value = "SELECT DISTINCT p.*, se.*, COALESCE(MAX(se.discount_percent), 0) as max_discount " +

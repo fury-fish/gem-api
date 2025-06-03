@@ -1,4 +1,4 @@
-package com.gemapi.controller;
+package com.gemapi.controller.home;
 
 import com.gemapi.entity.SaleEvent;
 import com.gemapi.service.SaleEventService;
